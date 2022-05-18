@@ -10,7 +10,9 @@
       />
 
       <div class="flex flex-wrap w-full md:h-90vh">
-        <div class="w-full md:w-6/12 h-80 mb-24 md:h-full md:mb-0 border-r border-black md:pr-12">
+        <div
+          class="w-full md:w-6/12 h-80 mb-24 md:h-full md:mb-0 border-r border-black md:pr-12"
+        >
           <div class="flex justify-between items-center">
             <input
               type="text"
@@ -46,7 +48,9 @@
           </div>
         </div>
 
-        <div class="w-full md:w-6/12 h-80 mb-24 md:h-full md:mb-0 border-l border-black md:pl-12">
+        <div
+          class="w-full md:w-6/12 h-80 mb-24 md:h-full md:mb-0 border-l border-black md:pl-12"
+        >
           <h2 class="font-bold mb-2 mt-8">Output</h2>
           <div class="bg-white h-5/6 overflow-scroll p-4">
             <table
@@ -83,39 +87,7 @@
               v-else-if="loading"
               class="h-full flex justify-center items-center"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                style="
-                  margin: auto;
-
-                  display: block;
-                "
-                width="100px"
-                height="100px"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="xMidYMid"
-              >
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="32"
-                  stroke-width="8"
-                  stroke="#1d0e0b"
-                  stroke-dasharray="50.26548245743669 50.26548245743669"
-                  fill="none"
-                  stroke-linecap="round"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    type="rotate"
-                    repeatCount="indefinite"
-                    dur="1s"
-                    keyTimes="0;1"
-                    values="0 50 50;360 50 50"
-                  ></animateTransform>
-                </circle>
-              </svg>
+              <Loading />
             </div>
             <p v-else>(Run the program to view its output)</p>
           </div>
@@ -132,6 +104,7 @@
 
 <script>
 import HeaderTab from "@/components/HeaderTab.vue";
+import Loading from "@/components/Loading.vue";
 // import customers from "@/assets/data/customers.js";
 import orders from "@/assets/data/orders.js";
 export default {
@@ -155,9 +128,9 @@ INSERT INTO students VALUES (2, 'Joanna', 'F');
 -- fetch some values
 SELECT * FROM students WHERE gender = 'F';
 `,
-hasRun: false
+          hasRun: false,
         },
-        { name: "employees.sql", query: "",hasRun: false },
+        { name: "employees.sql", query: "", hasRun: false },
       ],
       activeTab: 0,
       editor: null,
@@ -165,28 +138,37 @@ hasRun: false
   },
   components: {
     HeaderTab,
+    Loading,
   },
   methods: {
     run() {
       if (this.editor.getValue() === "") {
         this.$toasted.show("There is nothing to run", { type: "error" });
       } else {
-        if(this.files[this.activeTab].query !== this.editor.getSession().getValue()){
-        // this.hasRun = false;
-        this.files[this.activeTab].query = this.editor.getSession().getValue();
-         this.files[this.activeTab].hasRun = false;
+        if (
+          this.files[this.activeTab].query !==
+          this.editor.getSession().getValue()
+        ) {
+          // this.hasRun = false;
+          this.files[this.activeTab].query = this.editor
+            .getSession()
+            .getValue();
+          this.files[this.activeTab].hasRun = false;
 
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-          this.files[this.activeTab].hasRun = true;
-        }, 1000);
-      }
-       
+          this.loading = true;
+          setTimeout(() => {
+            this.loading = false;
+            this.files[this.activeTab].hasRun = true;
+          }, 1000);
+        }
       }
     },
     addFile() {
-      this.files.push({ name: `Untitled-${this.files.length}.sql`, query: "",hasRun: false });
+      this.files.push({
+        name: `Untitled-${this.files.length}.sql`,
+        query: "",
+        hasRun: false,
+      });
       this.activeTab = this.files.length - 1;
     },
     removeFile(idx) {
@@ -221,10 +203,7 @@ hasRun: false
     this.editor.setTheme("ace/theme/monokai");
     this.editor.session.setMode("ace/mode/sql");
 
-    this.editor.getSession().on("change", () => {
-      
-      
-    });
+    this.editor.getSession().on("change", () => {});
   },
 };
 </script>
