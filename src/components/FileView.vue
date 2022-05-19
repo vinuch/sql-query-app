@@ -25,9 +25,13 @@
       </div>
 
       <div class="bg-white h-5/6 relative">
-        <div id="editor">
-          {{ files[activeTab] && files[activeTab].query }}
-        </div>
+          <div id="editor">
+        <label>
+
+            {{ files[activeTab] && files[activeTab].query }}
+        </label>
+
+          </div>
       </div>
       <div class="flex justify-center mt-4">
         <button class="btn flex items-center" @click="run" id="run-btn">
@@ -91,13 +95,7 @@
       </div>
 
       <div class="flex justify-end mt-4">
-        <button
-          class="btn"
-          @click="downloadCSV"
-       
-        >
-          Export CSV
-        </button>
+        <button class="btn" @click="downloadCSV">Export CSV</button>
       </div>
     </div>
   </div>
@@ -127,25 +125,27 @@ export default {
       }
     },
     downloadCSV() {
-      if(this.files[this.activeTab].result){
-           var encodedUri = encodeURI(
-        [
-          "data:text/csv;charset=utf-8," + this.files[this.activeTab].result,
-        ].join("\n")
-      );
-      var link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `${this.files[this.activeTab].name.replace('.sql', '')}.csv`);
-      document.body.appendChild(link);
+      if (this.files[this.activeTab].result) {
+        var encodedUri = encodeURI(
+          [
+            "data:text/csv;charset=utf-8," + this.files[this.activeTab].result,
+          ].join("\n")
+        );
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute(
+          "download",
+          `${this.files[this.activeTab].name.replace(".sql", "")}.csv`
+        );
+        document.body.appendChild(link);
 
-      link.click();
-      }else {
-          this.$toasted.show("There is nothing to export, Run code first", {
+        link.click();
+      } else {
+        this.$toasted.show("There is nothing to export, Run code first", {
           type: "error",
           duration: 2000,
         });
       }
-   
     },
   },
   computed: {
