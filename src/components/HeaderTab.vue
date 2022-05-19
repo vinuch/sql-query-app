@@ -6,7 +6,7 @@
       :class="`tab ${activeTab === idx ? 'active' : ''}`"
      @click.self="$emit('change-tab', idx)"
     >
-      <span @click.self="$emit('change-tab', idx)">{{ file.name }}</span>
+      <span id="tab-name" @click.self="$emit('change-tab', idx)">{{ file.name }}</span>
       <button class="ml-4 text-lg" @click.self="removeFile(idx)">x</button>
     </div>
     <div class="tab border-4 border-white text-lg hover:bg-white" @click="addFile">+</div>

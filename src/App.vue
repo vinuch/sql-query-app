@@ -14,6 +14,7 @@
         :run="run"
         :editor="editor"
         :loading="loading"
+        @update-file="(idx, title) => updateFile(idx, title)"
       />
     </main>
   </div>
@@ -22,11 +23,12 @@
 <script>
 import HeaderTab from "@/components/HeaderTab.vue";
 import FileView from "@/components/FileView.vue";
-// import customers from "@/assets/data/customers.js";
+import data from "@/assets/data";
 export default {
   name: "App",
   data() {
     return {
+      resultOptions: [],
       loading: false,
       // hasRun: false,
       files: [
@@ -42,9 +44,10 @@ CREATE TABLE students (
 INSERT INTO students VALUES (1, 'Ryan', 'M');
 INSERT INTO students VALUES (2, 'Joanna', 'F');
 -- fetch some values
-SELECT * FROM students WHERE gender = 'F';
+SELECT * FROM customers WHERE gender = 'F';
 `,
           hasRun: false,
+          result: "",
         },
         { name: "employees.sql", query: "", hasRun: false },
       ],
@@ -57,26 +60,30 @@ SELECT * FROM students WHERE gender = 'F';
     FileView,
   },
   methods: {
+    updateFile(idx, title) {
+      this.files[idx].name = title;
+    },
     run() {
       if (this.editor.getValue() === "") {
-        this.$toasted.show("There is nothing to run", { type: "error" });
+        this.files[this.activeTab].hasRun = false;
+        this.$toasted.show("There is nothing to run", {
+          type: "error",
+          duration: 2000,
+        });
       } else {
-        if (
-          this.files[this.activeTab].query !==
-          this.editor.getSession().getValue()
-        ) {
-          // this.hasRun = false;
-          this.files[this.activeTab].query = this.editor
-            .getSession()
-            .getValue();
-          this.files[this.activeTab].hasRun = false;
+  
+        this.files[this.activeTab].query = this.editor.getSession().getValue();
+        this.files[this.activeTab].hasRun = false;
 
-          this.loading = true;
-          setTimeout(() => {
-            this.loading = false;
-            this.files[this.activeTab].hasRun = true;
-          }, 1000);
-        }
+        this.loading = true;
+        setTimeout(() => {
+          this.loading = false;
+          this.files[this.activeTab].hasRun = true;
+          this.files[this.activeTab].result =
+            this.resultOptions[
+              Math.floor(Math.random() * this.resultOptions.length)
+            ];
+        }, 500);
       }
     },
     addFile() {
@@ -88,24 +95,14 @@ SELECT * FROM students WHERE gender = 'F';
       this.activeTab = this.files.length - 1;
     },
     removeFile(idx) {
-      console.log(this.activeTab);
       this.files.splice(idx, 1);
-      // this.files = this.files.filter((item, id) => idx !== id)
-      // this.activeTab = 1;
-      // this.editor.setValue(this.files[this.activeTab].query);
       this.activeTab = this.files.length - 1;
-      console.log(this.activeTab);
-
-      // this.editor.setValue(this.files[this.files.length - 1].query);
     },
   },
   watch: {
     activeTab() {
       if (this.files[this.activeTab]) {
         this.editor.setValue(this.files[this.activeTab].query);
-        // this.hasRun = false;
-      } else {
-        console.log(this.files, this.activeTab);
       }
     },
   },
@@ -113,6 +110,18 @@ SELECT * FROM students WHERE gender = 'F';
     this.editor = window.ace.edit("editor");
     this.editor.setTheme("ace/theme/monokai");
     this.editor.session.setMode("ace/mode/sql");
+    // this.resultOptions = [orders, customers, employees]
+    let { orders, customers, employees } = data;
+    this.resultOptions = [orders, customers, employees];
+
+    window.addEventListener("beforeunload", function (e) {
+      var confirmationMessage =
+        "It looks like you have been editing something. " +
+        "If you leave before saving, your changes will be lost.";
+
+      (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+      return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    });
   },
 };
 </script>
