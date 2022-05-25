@@ -148,6 +148,11 @@ export default {
       }
     },
   },
+  watch: {
+    activeTab(val) {
+      this.title = this.files[val].name;
+    },
+  },
   computed: {
     resultList() {
       return this.files[this.activeTab].result.split("\n");
